@@ -52,15 +52,14 @@ sudo apt install docker.io docker-buildx
 
 DOCKER_BUILDKIT=1 \
 PASSWD=$(read -s -p 'Password:' PASSWD ; echo "$USER:$PASSWD") \
-docker image build --no-cache --secret id=PASSWD --tag dev-jupyter - << EOF
+docker image build --no-cache --secret id=PASSWD --tag dev-python - << EOF
   FROM ubuntu
   RUN --mount=type=secret,id=PASSWD \
-    apt-get update && apt-get install -y sudo tmux vim curl python3 python3-pip && \
+    apt-get update && apt-get install -y sudo ssh tmux vim curl python3 python3-pip && \
     useradd -m -s /bin/bash -G sudo $USER && \
     cat /run/secrets/PASSWD | chpasswd
     USER $USER
     ENV PATH "\$PATH:/home/$USER/.local/bin"
-    RUN pip3 install notebook
 EOF
 
 docker network create \
@@ -73,23 +72,20 @@ docker container run -it \
   --name dev-jupyter \
   --network bridge-dev \
   --ip 172.20.0.220 \
-  --publish 8888:8888 \
   --publish 8080:8080 \
   --volume "/home/$USER/ws/DEV:/home/$USER/ws/DEV" \
   --volume "/home/$USER/ws/NOTES/wiki:/home/$USER/ws/NOTES/wiki" \
-  -d dev-jupyter
+  -d dev-python
 
 docker container start -ia --detach-keys='ctrl-x' dev-jupyter
-docker container attach --detach-keys='ctrl-x' dev-jupyter
-
-~/.local/bin/jupyter notebook --ip 0.0.0.0 --port 8888 --no-browser
+docker container exec -it dev-jupyter bash -c 'sudo service ssh start'
 ```
 
 ### Run sheets-py script
 The client machine where authentication runs in the browser must PROXY `8080:172.20.0.220:8080` into the machine where Docker runs `172.20.0.220` container
 ```
 pip3 install -r requirements.txt 
-python3 app/main.py --bind-addr 172.20.0.220
+python3 app-v2/fetch_hacct.py --bind-addr 172.20.0.220
 ```
 
 ### Load authorization token
