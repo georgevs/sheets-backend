@@ -15,7 +15,7 @@ class DS:
   def col(self, name):
     return lambda row: row[self.cols_index[name]]
 
-  def filter(self, fn, cols=None):
+  def filter(self, *, fn=None, cols=None):
     cols = cols or self.cols()
     cols_index = index_from_list(cols)
     req_cols = [col for col in cols if col in self.cols()]
@@ -24,4 +24,5 @@ class DS:
       for col in req_cols:
         xs[cols_index[col]] = row[self.cols_index[col]]
       return xs
-    return cols, map(copy, filter(fn, self.rows()))
+    rows = filter(fn, self.rows()) if fn else self.rows()
+    return cols, map(copy, rows)

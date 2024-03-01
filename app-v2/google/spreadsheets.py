@@ -1,6 +1,7 @@
 from google.service import Service
 
 
+# https://developers.google.com/sheets/api/reference/rest
 class Spreadsheets(Service):
   def __init__(self, authenticator):
     scopes = ['https://www.googleapis.com/auth/spreadsheets']

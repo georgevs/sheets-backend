@@ -5,7 +5,7 @@ from util.ods import ODS
 
 class Bal(DS):
   def load_sheet(ods, sheet_name='BAL'):
-    sheet_columns = ['DT', 'AMNT', 'GCASH', 'U3947', 'U9271', 'VCASH', 'VLOAN', 'NOTE']
+    sheet_columns = ['DT', 'AMNT', 'ACCT', 'GCASH', 'U3947', 'U9271', 'VCASH', 'VLOAN', 'NOTE']
     cols, rows = ods.load_sheet(sheet_name, sheet_columns)
     return Bal(sheet_name, cols, rows)
   
@@ -15,7 +15,8 @@ class Bal(DS):
     self.note = self.col('NOTE')
 
   def update_sheet(self, ods, *, sheet_name=None, index=0):
-    ods.update_sheet(ODS.sheet_for(sheet_name or self.sheet_name, self.cols(), self.rows()), index=index)
+    sheet=ODS.sheet_for(sheet_name or self.sheet_name, self.cols(), self.rows())
+    ods.update_sheet(sheet=sheet, index=index)
 
   def notes(self):
     return (
@@ -63,7 +64,10 @@ class Bal(DS):
   }
 
   def drop_empty(self):
-    return Bal(self.sheet_name, *self.filter(self.note))
+    return Bal(self.sheet_name, *self.filter(fn=self.note))
+  
+  def copy_only_columns(self, cols):  
+    return Bal(self.sheet_name, *self.filter(cols=cols))
 
   def add_acct(self):
     if self.cols_index.get('ACCT'):
