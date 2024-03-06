@@ -44,15 +44,16 @@ class Bal(DS):
   }
   lookup_accts = {
     'bal': ['превод', 'transfer'],
+    'c1080': ['c9277'],
     'carpool': ['car'],
     'electro': ['chez'],
     'entertainment': ['movie','theatre'],
     'eyecare': ['easysept', 'eye'],
     'food': ['good','zelen','zugl'],
-    'home': ['lamp'],
     'games': ['carcassonne','game'],
     'groom': ['haircut','hairdresser','toiletries','shoes'],
     'gvsm': ['sopharma'],
+    'home': ['lamp'],
     'leisure': ['beer','breakfast','cocktails','coffee','coffeee', 'coffees','dinner','drinks','gram','lunch','open','party','taxi'],
     'office': ['laptop','xps','notebook'],
     'pens': ['пенсия'],

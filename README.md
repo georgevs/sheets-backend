@@ -85,7 +85,9 @@ docker container exec -it dev-jupyter bash -c 'sudo service ssh start'
 The client machine where authentication runs in the browser must PROXY `8080:172.20.0.220:8080` into the machine where Docker runs `172.20.0.220` container
 ```
 pip3 install -r requirements.txt 
-python3 app-v2/fetch_hacct.py --bind-addr 172.20.0.220
+python3 app/download_hacct.py --bind-addr 172.20.0.220
+python3 app/groom_hacct.py
+python3 app/upload_hacct.py --bind-addr 172.20.0.220
 ```
 
 ### Load authorization token
