@@ -58,6 +58,44 @@ class App:
       )
       spreadsheet_id = spreadsheet.get('spreadsheetId')
 
+    # TODO:
+    categories = [
+      ['borica','expense,utilities'],
+      ['c1080','income'],
+      ['carpool','expense'],
+      ['electro','expense,utilities'],
+      ['entertainment','expense'],
+      ['eyecare','expense,medical'],
+      ['fee','expense'],
+      ['fitness','expense,sport'],
+      ['food','expense'],
+      ['games','expense'],
+      ['groom','expense'],
+      ['gviva','expense,utilities'],
+      ['gvsm','expense,medical'],
+      ['home','expense'],
+      ['iceskating','expense,sport'],
+      ['leisure','expense'],
+      ['metro','expense,utilities'],
+      ['office','expense'],
+      ['pens','income'],
+      ['pztax','expense,utilities'],
+      ['sbst','expense,utilities'],
+      ['sftax','expense,utilities'],
+      ['shoa','expense,utilities'],
+      ['ski','expense,sport'],
+      ['socj','expense,utilities'],
+      ['socp','income'],
+      ['sport','expense,sport'],
+      ['svod','expense,utilities'],
+      ['telk','expense,medical'],
+      ['toplo','expense,utilities'],
+      ['unknown','expense'],
+      ['vgsa','expense'],
+      ['vgsm','expense,medical'],
+      ['vviva','expense,utilities'],
+    ]
+
     result = (self.services.spreadsheets.service().spreadsheets()
       .values().batchUpdate(
         spreadsheetId=spreadsheet_id,
@@ -79,6 +117,11 @@ class App:
               range='CATX!A1:B1',
               majorDimension='ROWS',
               values=[['ACCT','CAT']]
+            ),
+            dict(
+              range=f'CATX!A2:B{len(categories) + 1}',
+              majorDimension='ROWS',
+              values=categories,
             ),
           ]
         )

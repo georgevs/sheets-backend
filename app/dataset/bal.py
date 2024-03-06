@@ -61,6 +61,7 @@ class Bal(DS):
     'sport': ['hike','rilski','мальовица'],
     'svod': ['svoda'],
     'unknown': ['unknow'],
+    'vgsa': ['allowance'],
     'vviva': ['v2181'],
   }
 
