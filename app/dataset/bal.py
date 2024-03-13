@@ -36,34 +36,12 @@ class Bal(DS):
       acct = lookup_key_for_val(Bal.lookup_accts, acct, acct)
     return acct
 
-  lookup_notes = {
-    'eyecare': ['gvsm.eyecare'],
-    'leisure': ['събиране на класа','чрд силвия'],
-    'pens': ['великденска добавка'],
-    'telk': ['vgs.telk'],
-  }
-  lookup_accts = {
-    'bal': ['превод', 'transfer'],
-    'c1080': ['c9277'],
-    'carpool': ['car'],
-    'electro': ['chez'],
-    'entertainment': ['movie','theatre'],
-    'eyecare': ['easysept', 'eye'],
-    'food': ['good','zelen','zugl'],
-    'games': ['carcassonne','game'],
-    'groom': ['haircut','hairdresser','toiletries','shoes'],
-    'gvsm': ['sopharma'],
-    'home': ['lamp'],
-    'leisure': ['beer','breakfast','cocktails','coffee','coffeee', 'coffees','dinner','drinks','gram','lunch','open','party','taxi'],
-    'office': ['laptop','xps','notebook'],
-    'pens': ['пенсия'],
-    'socp': ['социални'],
-    'sport': ['hike','rilski','мальовица'],
-    'svod': ['svoda'],
-    'unknown': ['unknow'],
-    'vgsa': ['allowance'],
-    'vviva': ['v2181'],
-  }
+  def init(config):
+    Bal.lookup_notes = config.get('lookup_notes', {})
+    Bal.lookup_accts = config.get('lookup_accts', {})
+
+  lookup_notes = None
+  lookup_accts = None
 
   def drop_empty(self):
     return Bal(self.sheet_name, *self.filter(fn=self.note))

@@ -1,7 +1,6 @@
 from dataset.bal import Bal
-from dataset.fn import sample
 from services.local_storage import LocalStorage, Config as LocalStorageConfig
-from util.json import dump_json
+from util.json import dump_json, try_load_json
 from util.ods import ODS
 
 
@@ -14,6 +13,7 @@ def main(config, args):
 class App:
   def __init__(self, config):
     self.services = Services(config)
+    Bal.init(config.bal)
 
   def groom_hacct(self, spreadsheet_name):
     is_target_spreadsheet = (lambda it: it.get('id') == f'{spreadsheet_name}.ods')
@@ -41,7 +41,9 @@ class Services:
 
 class Config:
   def __init__(self, args):
+    config = try_load_json(args.config_path) or {}
     self.storage = LocalStorageConfig(args)
+    self.bal = config.get('bal', {})
 
 
 if __name__ == '__main__':
@@ -49,6 +51,7 @@ if __name__ == '__main__':
 
   parser = argparse.ArgumentParser()
   parser.add_argument('--data-path', type=str, default='./data/__confidential')
+  parser.add_argument('--config-path', type=str, default='./secrets/config.json')
   parser.add_argument('--spreadsheet-name', type=str)
   args = parser.parse_args()
 

@@ -3,7 +3,7 @@ from google.authenticator import Authenticator, Config as AuthenticatorConfig
 from google.drive import Drive
 from google.spreadsheets import Spreadsheets
 from services.local_storage import LocalStorage, Config as LocalStorageConfig
-from util.json import dump_json
+from util.json import dump_json, try_load_json
 from util.ods import ODS
 from dataset.dataset import DS
 
@@ -17,6 +17,7 @@ def main(config, args):
 class App:
   def __init__(self, config):
     self.services = Services(config)
+    App.categories = config.categories
 
   def upload_spreadsheet(self, spreadsheet_name):
     is_target_spreadsheet = (lambda it: it.get('id') == f'{spreadsheet_name}.ods')
@@ -58,44 +59,6 @@ class App:
       )
       spreadsheet_id = spreadsheet.get('spreadsheetId')
 
-    # TODO:
-    categories = [
-      ['borica','expense,utilities'],
-      ['c1080','income'],
-      ['carpool','expense'],
-      ['electro','expense,utilities'],
-      ['entertainment','expense'],
-      ['eyecare','expense,medical'],
-      ['fee','expense'],
-      ['fitness','expense,sport'],
-      ['food','expense'],
-      ['games','expense'],
-      ['groom','expense'],
-      ['gviva','expense,utilities'],
-      ['gvsm','expense,medical'],
-      ['home','expense'],
-      ['iceskating','expense,sport'],
-      ['leisure','expense'],
-      ['metro','expense,utilities'],
-      ['office','expense'],
-      ['pens','income'],
-      ['pztax','expense,utilities'],
-      ['sbst','expense,utilities'],
-      ['sftax','expense,utilities'],
-      ['shoa','expense,utilities'],
-      ['ski','expense,sport'],
-      ['socj','expense,utilities'],
-      ['socp','income'],
-      ['sport','expense,sport'],
-      ['svod','expense,utilities'],
-      ['telk','expense,medical'],
-      ['toplo','expense,utilities'],
-      ['unknown','expense'],
-      ['vgsa','expense'],
-      ['vgsm','expense,medical'],
-      ['vviva','expense,utilities'],
-    ]
-
     result = (self.services.spreadsheets.service().spreadsheets()
       .values().batchUpdate(
         spreadsheetId=spreadsheet_id,
@@ -119,9 +82,9 @@ class App:
               values=[['ACCT','CAT']]
             ),
             dict(
-              range=f'CATX!A2:B{len(categories) + 1}',
+              range=f'CATX!A2:B{len(App.categories) + 1}',
               majorDimension='ROWS',
-              values=categories,
+              values=App.categories,
             ),
           ]
         )
@@ -130,6 +93,8 @@ class App:
     )
 
     return result
+
+  categories = None
 
 
 class Services:
@@ -141,8 +106,10 @@ class Services:
 
 class Config:
   def __init__(self, args):
+    config = try_load_json(args.config_path) or {}
     self.authenticator = AuthenticatorConfig(args)
     self.storage = LocalStorageConfig(args)
+    self.categories = config.get('categories', [])
 
 
 if __name__ == '__main__':
@@ -152,6 +119,7 @@ if __name__ == '__main__':
   parser.add_argument('--bind-addr', type=str)
   parser.add_argument('--secrets-path', type=str)
   parser.add_argument('--data-path', type=str, default='./data/__confidential')
+  parser.add_argument('--config-path', type=str, default='./secrets/config.json')
   parser.add_argument('--spreadsheet-name', type=str)
   args = parser.parse_args()
 
