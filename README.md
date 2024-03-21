@@ -83,11 +83,21 @@ docker container exec -it dev-jupyter bash -c 'sudo service ssh start'
 
 ### Run sheets-py script
 The client machine where authentication runs in the browser must PROXY `8080:172.20.0.220:8080` into the machine where Docker runs `172.20.0.220` container
-```
+```bash
 pip3 install -r requirements.txt 
 python3 app/download_hacct.py --bind-addr 172.20.0.220
 python3 app/groom_hacct.py
 python3 app/upload_hacct.py --bind-addr 172.20.0.220
+```
+
+### Stage a demo
+```bash
+python3 app/groom_hacct.py --config-path ./secrets/config.demo.json --spreadsheet-groomed-name HACC-demo
+python3 app/upload_hacct.py --bind-addr 172.20.0.220 --config-path ./secrets/config.demo.json --spreadsheet-name HACC-demo
+
+curl -s https://content-sheets.googleapis.com/v4/spreadsheets/1dFa-QpbnFzd7JaP-G5XLvYbsoZ0FcWv_I7u5S5XAbCc/values/BAL -H "Authorization: Bearer $TOKEN" -o ./data/confidential/BAL.json
+
+curl -s https://content-sheets.googleapis.com/v4/spreadsheets/1dFa-QpbnFzd7JaP-G5XLvYbsoZ0FcWv_I7u5S5XAbCc/values/CATX -H "Authorization: Bearer $TOKEN" -o ./data/confidential/CATX.json
 ```
 
 ### Load authorization token

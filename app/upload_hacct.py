@@ -10,14 +10,15 @@ from dataset.dataset import DS
 
 def main(config, args):
   app = App(config)
-  spreadsheet_name = args.spreadsheet_name or 'HACC-groomed'
-  print(dump_json(app.upload_spreadsheet(spreadsheet_name=spreadsheet_name)))
+  print(dump_json(app.upload_spreadsheet(spreadsheet_name=args.spreadsheet_name)))
 
 
 class App:
   def __init__(self, config):
     self.services = Services(config)
     App.categories = config.categories
+    if config.whitelist_accts:
+      App.categories = list(filter(lambda it: it[0] in config.whitelist_accts, App.categories))
 
   def upload_spreadsheet(self, spreadsheet_name):
     is_target_spreadsheet = (lambda it: it.get('id') == f'{spreadsheet_name}.ods')
@@ -110,6 +111,7 @@ class Config:
     self.authenticator = AuthenticatorConfig(args)
     self.storage = LocalStorageConfig(args)
     self.categories = config.get('categories', [])
+    self.whitelist_accts = config.get('whitelist_accts', None)
 
 
 if __name__ == '__main__':
@@ -118,9 +120,9 @@ if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   parser.add_argument('--bind-addr', type=str)
   parser.add_argument('--secrets-path', type=str)
-  parser.add_argument('--data-path', type=str, default='./data/__confidential')
+  parser.add_argument('--data-path', type=str, default='./data/confidential')
   parser.add_argument('--config-path', type=str, default='./secrets/config.json')
-  parser.add_argument('--spreadsheet-name', type=str)
+  parser.add_argument('--spreadsheet-name', type=str, default='HACC-groomed')
   args = parser.parse_args()
 
   config = Config(args)

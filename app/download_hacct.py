@@ -6,8 +6,7 @@ from services.local_storage import LocalStorage, Config as LocalStorageConfig
 
 def main(config, args):
   app = App(config)
-  spreadsheet_name = args.spreadsheet_name or 'HACC'
-  print(dump_json(app.download_spreadsheet(spreadsheet_name=spreadsheet_name)))
+  print(dump_json(app.download_spreadsheet(spreadsheet_name=args.spreadsheet_name)))
 
 
 class App:
@@ -42,9 +41,9 @@ if __name__ == '__main__':
 
   parser = argparse.ArgumentParser()
   parser.add_argument('--bind-addr', type=str)
-  parser.add_argument('--secrets-path', type=str)
-  parser.add_argument('--data-path', type=str, default='./data/__confidential')
-  parser.add_argument('--spreadsheet-name', type=str)
+  parser.add_argument('--secrets-path', type=str, default='./secrets')
+  parser.add_argument('--data-path', type=str, default='./data/confidential')
+  parser.add_argument('--spreadsheet-name', type=str, default='HACC')
   args = parser.parse_args()
 
   config = Config(args)

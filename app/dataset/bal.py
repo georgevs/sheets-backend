@@ -39,9 +39,11 @@ class Bal(DS):
   def init(config):
     Bal.lookup_notes = config.get('lookup_notes', {})
     Bal.lookup_accts = config.get('lookup_accts', {})
+    Bal.whitelist_accts = config.get('whitelist_accts', None)
 
   lookup_notes = None
   lookup_accts = None
+  whitelist_accts = None
 
   def drop_empty(self):
     return Bal(self.sheet_name, *self.filter(fn=self.note))
@@ -57,4 +59,6 @@ class Bal(DS):
     assert pos <= len(cols)
     cols.insert(pos, 'ACCT')
     rows = map(lambda row: list_insert(row.copy(), pos, Bal.acct_from_note(self.note(row))), self.rows())
+    if Bal.whitelist_accts:
+      rows = filter(lambda row: row[pos] in Bal.whitelist_accts, rows)
     return Bal(self.sheet_name, cols, rows)
